@@ -1,0 +1,4 @@
+(library
+    (name irmin_web)
+    (public_name irmin-web)
+    (libraries yurt irmin-graphql irmin-unix))

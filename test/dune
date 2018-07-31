@@ -1,0 +1,10 @@
+(executables
+    (libraries irmin-web)
+    (names test)
+    (modules test))
+
+(alias
+    (name runtest)
+    (package irmin-web)
+    (deps test.exe)
+    (action (run %{dep:test.exe})))
