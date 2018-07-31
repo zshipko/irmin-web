@@ -34,6 +34,7 @@ module Server = struct
     let graphql_port = port + 1 in
     let graphql_address = Printf.sprintf "http://localhost:%d" graphql_port in
     start_graphql_server t graphql_port >>= fun pid ->
+    Lwt_unix.on_signal Sys.sigint (fun _ -> Unix.kill 9 pid) |> ignore;
     server addr port
     >| post "/graphql" (fun _req _params _body ->
       redirect graphql_address)
