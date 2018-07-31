@@ -1,8 +1,8 @@
-irmin-web — Tools for building websites using irmin-graphql
+irmin-web
 -------------------------------------------------------------------------------
 %%VERSION%%
 
-irmin-web is TODO
+irmin-web is a tool for building websites using irmin-graphql
 
 irmin-web is distributed under the ISC license.
 
