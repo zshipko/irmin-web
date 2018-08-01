@@ -9,40 +9,43 @@ open Lwt.Infix
 module Store = Irmin_unix.Git.FS.KV(Irmin.Contents.Json)
 module Graphql = Irmin_graphql.Make(Store)
 
+let js = [%blob "../../js/irmin.js"]
+
+external realpath: string -> string = "ml_realpath"
+
 module Server = struct
   type t = {
+    cfg: Irmin.config;
     repo: Store.repo;
   }
 
   let create ?head ?bare root =
     let cfg = Irmin_git.config ?head ?bare root in
     Store.Repo.v cfg >|= fun repo ->
-    {repo}
+    {cfg; repo}
 
   let start_graphql_server t port =
-    Store.master t.repo >>= fun master ->
-    Lwt_io.flush_all () >|= fun () ->
-    match Lwt_unix.fork () with
-    | -1 -> -1
-    | 0 ->
-        let cmd = Graphql.start_server ~port master in
-        Lwt_main.run cmd; 0
-    | n -> n
+    Store.Repo.v t.cfg >>= fun repo ->
+    Store.master repo >>= fun master ->
+    Graphql.start_server ~port master
 
   let run ?(addr = "localhost") ?(port = 5089) ?(static = "./static") t =
     let open Yurt.Server in
+    let static = realpath static in
+    print_endline (Unix.getcwd ());
+    print_endline static;
     let graphql_port = port + 1 in
-    let graphql_address = Printf.sprintf "http://localhost:%d" graphql_port in
-    start_graphql_server t graphql_port >>= fun pid ->
-    Lwt_unix.on_signal Sys.sigint (fun _ -> Unix.kill 9 pid) |> ignore;
+    let graphql_address = Printf.sprintf "http://localhost:%d/graphql" graphql_port in
+    Lwt.async (fun () -> start_graphql_server t graphql_port);
     server addr port
-    >| post "/graphql" (fun _req _params _body ->
-      redirect graphql_address)
-    >| folder (Filename.concat (Filename.concat static "static") "js") "static/js"
-    >| folder (Filename.concat (Filename.concat static "static") "css") "static/css"
+    >| post "/graphql" (fun req _params body ->
+      let headers = Yurt.Request.headers req in
+      Yurt.Client.post ~headers ~body graphql_address >>= fun (_, body) -> string body)
+    >| get "/irmin.js" (fun _req _params _body -> string ~headers:(Yurt.Header.of_list ["Content-Type", "text/javacript"]) js)
+    >| folder (Filename.concat static "js") "static/js"
+    >| folder (Filename.concat static "css") "static/css"
     >| static_file (Filename.concat static "index.html") ""
-    |> start >|= fun () ->
-    Unix.kill 9 pid
+    |> start
 end
 
 (*---------------------------------------------------------------------------

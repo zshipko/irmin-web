@@ -8,7 +8,7 @@ open Lwt.Infix
 
 let main =
   Irmin_web.Server.create "./tmp" >>= fun server ->
-  Irmin_web.Server.run server
+  Irmin_web.Server.run ~static:"../../../static" server
 
 let _ = Lwt_main.run main
 

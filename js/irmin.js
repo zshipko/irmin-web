@@ -141,7 +141,7 @@ class Irmin {
                 resolve(x.set)
             }, reject);
         })
-    },
+    }
 
     // Remove a value
     remove(key, branch=null){

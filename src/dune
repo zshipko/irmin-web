@@ -1,4 +1,6 @@
 (library
     (name irmin_web)
     (public_name irmin-web)
+    (preprocess (pps ppx_blob))
+    (c_names realpath)
     (libraries yurt irmin-graphql irmin-unix))
