@@ -6,14 +6,14 @@
 
 open Lwt.Infix
 
-module Store = Irmin_unix.Git.FS.KV(Irmin.Contents.Json)
-module Graphql = Irmin_graphql.Make(Store)
+external realpath: string -> string = "ml_realpath"
 
 let js = [%blob "../../js/irmin.js"]
 
-external realpath: string -> string = "ml_realpath"
+module Make(Store: Irmin.S) = struct
 
-module Server = struct
+  module Graphql = Irmin_graphql.Make(Store)
+
   type t = {
     cfg: Irmin.config;
     repo: Store.repo;

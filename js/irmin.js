@@ -43,6 +43,15 @@ mutation RemoveKey($branch: String, $key: String!) {
 }
 `,
 
+merge:
+`
+mutation Merge($into: String, $from: String!) {
+    merge(into: $into, from: $from, info: null) {
+        hash
+    }
+}
+`,
+
 master:
 `
 query {
@@ -103,9 +112,13 @@ class Irmin {
 
         return new Promise((resolve, reject) => {
             return request(this.url, q).then((response) => {
-                response.json().then((j) => {
-                    resolve(j.data)
-                }, reject)
+                response.text().then((x) => {
+                    try {
+                        resolve(JSON.parse(x).data)
+                    } catch (err) {
+                        reject(x)
+                    }
+                });
             }, reject);
         });
     }
@@ -155,6 +168,36 @@ class Irmin {
                 }
             }).then((x) => {
                 resolve(x.remove)
+            }, reject);
+        })
+    }
+
+    // Merge branches
+    merge(into, from){
+        return new Promise((resolve, reject) => {
+            this.execute({
+                body: query.merge,
+                variables: {
+                    into: into,
+                    from: from,
+                }
+            }).then((x) => {
+                resolve(x.merge)
+            }, reject);
+        })
+    }
+
+    // Push to a remote repository
+    push(remote, branch=null){
+        return new Promise((resolve, reject) => {
+            this.execute({
+                body: query.push,
+                variables: {
+                    remote: remote,
+                    branch: branch,
+                }
+            }).then((x) => {
+                resolve(x.push)
             }, reject);
         })
     }

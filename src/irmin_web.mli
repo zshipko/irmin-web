@@ -10,9 +10,9 @@
 
 (** {1 Irmin-web} *)
 
-module Store: Irmin.S with type contents = Irmin.Contents.Json.t
 
-module Server: sig
+
+module Make(Store: Irmin.S): sig
   type t
 
   val create: ?head:Git.Reference.t -> ?bare:bool -> string -> t Lwt.t
