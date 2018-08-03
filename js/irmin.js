@@ -13,63 +13,7 @@ function request(url, body){
 }
 
 // The `query` object contains all of the pre-defined queries
-let query = {
-get:
-`
-query GetKey($branch: String!, $key: String!) {
-    branch(name: $branch) {
-        get(key: $key) {
-            value
-        }
-    }
-}
-`,
-
-set:
-`
-mutation SetKey($branch: String, $key: String!, $value: String!) {
-    set(branch: $branch, key: $key, value: $value, info: null) {
-        hash
-    }
-}
-`,
-
-remove:
-`
-mutation RemoveKey($branch: String, $key: String!) {
-    remove(branch: $branch, key: $key, info: null) {
-        hash
-    }
-}
-`,
-
-merge:
-`
-mutation Merge($into: String, $from: String!) {
-    merge(into: $into, from: $from, info: null) {
-        hash
-    }
-}
-`,
-
-master:
-`
-query {
-    master {
-        name
-        head {
-            hash,
-            info {
-                message,
-                author,
-                date
-            }
-            parents
-        }
-    }
-}
-`,
-};
+var query;
 
 // Used to store keys as an array of strings, this is meant to mirror
 // the way keys are represented in Irmin
@@ -77,13 +21,18 @@ class Key {
     constructor(k) {
         if (typeof k === 'string'){
             this.path = k.split('/');
+
         } else {
             this.path = k
         }
     }
 
     string(){
-        return this.path.join('/');
+        if (this.path){
+            return this.path.join('/');
+        } else {
+            return null;
+        }
     }
 }
 
@@ -202,6 +151,51 @@ class Irmin {
         })
     }
 
+    // Pull from a remote repository
+    pull(remote, branch=null){
+        return new Promise((resolve, reject) => {
+            this.execute({
+                body: query.pull,
+                variables: {
+                    remote: remote,
+                    branch: branch,
+                }
+            }).then((x) => {
+                resolve(x.pull)
+            }, reject)
+        })
+    }
+
+    // Restore Irmin to a previous state
+    revert(commit, branch=null){
+        return new Promise((resolve, reject) => {
+            this.execute({
+                body: query.revert,
+                variables: {
+                    commit: commit,
+                    branch: branch,
+                }
+            }).then((x) => {
+                resolve(x.revert.hash === commit)
+            }, reject)
+        })
+    }
+
+    // Clone from a remote repository
+    clone(remote, branch=null){
+        return new Promise((resolve, reject) => {
+            this.execute({
+                body: query.clone,
+                variables: {
+                    remote: remote,
+                    branch: branch,
+                }
+            }).then((x) => {
+                resolve(x.clone)
+            }, reject)
+        })
+    }
+
     // Returns information about the master branch
     master(){
         return new Promise((resolve, reject) => {
@@ -212,4 +206,186 @@ class Irmin {
             }, reject)
         });
     }
+
+    // Returns information about any branch
+    branch(name){
+        return new Promise((resolve, reject) => {
+            this.execute({
+                body: query.branch,
+                variables: {
+                    branch: name
+                }
+            }).then((x) => {
+                resolve(x.branch)
+            }, reject)
+        });
+    }
+
+    list(key, branch=null){
+        key = makeKey(key);
+        return new Promise((resolve, reject) => {
+            this.execute({
+                body: branch == null ? query.listMaster : query.list,
+                variables: {
+                    key: key.string(),
+                    branch: branch,
+                }
+            }).then((x) => {
+                resolve((branch == null ? x.master : x.branch).head.node.get.tree)
+            }, reject)
+        })
+    }
+
 }
+
+query = {
+get:
+`
+query GetKey($branch: String!, $key: String!) {
+    branch(name: $branch) {
+        get(key: $key) {
+            value
+        }
+    }
+}
+`,
+
+set:
+`
+mutation SetKey($branch: String, $key: String!, $value: String!) {
+    set(branch: $branch, key: $key, value: $value, info: null) {
+        hash
+    }
+}
+`,
+
+remove:
+`
+mutation RemoveKey($branch: String, $key: String!) {
+    remove(branch: $branch, key: $key, info: null) {
+        hash
+    }
+}
+`,
+
+merge:
+`
+mutation Merge($into: String, $from: String!) {
+    merge(into: $into, from: $from, info: null) {
+        hash
+    }
+}
+`,
+
+push:
+`
+mutation Push($branch: String, $remote: String!) {
+    push(branch: $branch, remote: $remote)
+}
+`,
+
+pull:
+`
+mutation Pull($branch: String, $remote: String!) {
+    pull(branch: $branch, remote: $remote, info: null) {
+        hash
+    }
+}
+`,
+
+clone:
+`
+mutation Clone($branch: String, $remote: String!) {
+    clone(branch: $branch, remote: $remote) {
+        hash
+    }
+}
+`,
+
+revert:
+`
+mutation Revert($branch: String, $commit: String!) {
+    revert(branch: $branch, commit: $commit) {
+        hash
+    }
+}
+`,
+
+master:
+`
+query {
+    master {
+        name
+        head {
+            hash,
+            info {
+                message,
+                author,
+                date
+            }
+            parents {
+                hash
+            }
+        }
+    }
+}
+`,
+
+branch:
+`
+query GetBranch($branch: String!) {
+    branch(name: $branch) {
+        name,
+        head {
+            hash,
+            info {
+                message,
+                author,
+                date
+            }
+            parents {
+                hash
+            }
+        }
+    }
+}
+`,
+
+list:
+`
+query List($branch: String!, $key: String!) {
+    branch(name: $branch) {
+        head {
+            node {
+                get(key: $key) {
+                    tree {
+                        key,
+                        value
+                    }
+                }
+            }
+        }
+    }
+}
+`,
+
+listMaster:
+`
+query ListMaster($key: String!) {
+    master {
+        head {
+            node {
+                get(key: $key) {
+                    tree {
+                        key,
+                        value
+                    }
+                }
+            }
+        }
+    }
+}
+`
+
+};
+
