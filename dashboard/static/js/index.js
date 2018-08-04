@@ -7,7 +7,7 @@ function updateMaster() {
     });
 }
 
-var errorTimeout;
+var errorTimeout = null;
 
 var app = new Vue({
     el: '#app',
@@ -29,22 +29,26 @@ var app = new Vue({
     methods: {
         Error: (msg) => {
             app.error = msg;
+            app.$forceUpdate();
             if (errorTimeout) clearTimeout(errorTimeout);
             errorTimeout = setTimeout(() => {
                 app.error = null;
                 app.$forceUpdate();
             }, 3500);
         },
-        Get: (event) => {
-            ir.get(app.get.key).then((x) => {
+        Show: (key) => {
+            app.block = 'get';
+            ir.get(key).then((x) => {
                 app.get.value = x;
                 app.get.key = '';
+                app.$forceUpdate();
             }, app.Error);
         },
+        Get: (event) => {
+            app.Show(app.get.key);
+        },
         List: (event) => {
-            var key = app.list.key;
-            key = key == '/' || key == '' ? null : key;
-            ir.list(key).then((x) => {
+            ir.list(app.list.key).then((x) => {
                 app.list.items = x;
                 app.list.key = '';
                 app.$forceUpdate();

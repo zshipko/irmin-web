@@ -8,12 +8,12 @@ body {
     text-align: center;
 }
 
-h4 {
-    margin-top: 0px;
-    margin-bottom: 5px;
-    background: black;
+.block h4 {
     color: white;
-    padding: 10px;
+    background: black;
+    border-bottom: 1px solid black;
+    margin-top: 0px;
+    padding: 5px;
 }
 
 .hash {
@@ -28,9 +28,9 @@ h4 {
     text-align: left;
     border: 1px solid black;
     display: none;
-    max-height: 500px;
+    max-height: 650px;
+    overflow: auto;
     vertical-align: top;
-    margin: 10px;
     width: 100%;
     margin: auto;
 }
@@ -40,11 +40,15 @@ h4 {
 }
 
 input {
-    width: 100%;
+    width: 95%;
+    margin: auto;
+    display: block;
 }
 
 .value {
-    width: 100%;
+    width: 95%;
+    margin: auto;
+    display: block;
     height: 250px;
 }
 
@@ -53,11 +57,11 @@ input {
 }
 
 .selected.item {
-    color: white;
-    background: black;
+    color: blue;
 }
 
 .items {
+    text-align: left;
     width: 150px;
     float: left;
 }
@@ -69,17 +73,22 @@ input {
 }
 
 .item:hover {
-    color: white;
-    background: black;
+    text-decoration: underline;
 }
 
 .error {
     position: fixed;
     padding: 5px;
-    background: black;
+    background: red;
     color: white;
     bottom: 0px;
     left: 0px;
     right: 0px;
 }
 
+pre.key {
+    border: 1px solid #ddd;
+    padding: 1px;
+    display: inline-block;
+    margin: 0px;
+}

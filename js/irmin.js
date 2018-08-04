@@ -23,15 +23,24 @@ class Key {
             if (k[0] == '/'){
                 k = k.slice(1);
             }
-            this.path = k.split('/');
 
+            if (k == ''){
+                this.path = [];
+                return;
+            }
+
+            this.path = k.split('/');
         } else {
             this.path = k
         }
     }
 
+    append(x) {
+        this.path.append(x);
+    }
+
     string(){
-        if (this.path){
+        if (this.path && this.path.length > 0){
             return this.path.join('/');
         } else {
             return null;
