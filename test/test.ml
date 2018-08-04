@@ -10,7 +10,8 @@ module Store = Irmin_unix.Git.FS.KV(Irmin.Contents.String)
 module Server = Irmin_web.Make(Store)
 
 let main =
-  Server.create "./tmp" >>= fun server ->
+  let cfg = Irmin_git.config "./tmp" in
+  Server.create cfg >>= fun server ->
   Server.run ~static:"../../../static" server
 
 let _ = Lwt_main.run main
