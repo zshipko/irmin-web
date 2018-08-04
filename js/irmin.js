@@ -20,6 +20,9 @@ var query;
 class Key {
     constructor(k) {
         if (typeof k === 'string'){
+            if (k[0] == '/'){
+                k = k.slice(1);
+            }
             this.path = k.split('/');
 
         } else {

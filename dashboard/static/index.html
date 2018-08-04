@@ -45,6 +45,20 @@
                     </div>
                 </div> <!-- get -->
 
+              <div v-bind:class="{selected: block == 'list', block: true}">
+                    <h4>List</h4>
+                    <div>
+                        <div>
+                            <input v-model="list.key" v-on:keydown.13="List" placeholder="Key">
+                        </div>
+                        <ul>
+                            <li v-for="item in list.items">
+                                {{item.key}}
+                            </li>
+                        </ul>
+                    </div>
+                </div> <!-- list -->
+
                <div v-bind:class="{selected: block == 'clone', block: true}">
                     <h4>Clone</h4>
                     <div>

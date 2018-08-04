@@ -3,6 +3,7 @@ let ir = new Irmin("http://localhost:5089/graphql");
 function updateMaster() {
     ir.master().then((data) => {
         app.master = data;
+        app.$forceUpdate();
     });
 }
 
@@ -15,10 +16,12 @@ var app = new Vue({
         get: {},
         set: {},
         clone: {},
+        list: {},
         block: '',
         error: null,
         items: [
             "get",
+            "list",
             "clone",
             "set",
         ]
@@ -36,6 +39,15 @@ var app = new Vue({
             ir.get(app.get.key).then((x) => {
                 app.get.value = x;
                 app.get.key = '';
+            }, app.Error);
+        },
+        List: (event) => {
+            var key = app.list.key;
+            key = key == '/' || key == '' ? null : key;
+            ir.list(key).then((x) => {
+                app.list.items = x;
+                app.list.key = '';
+                app.$forceUpdate();
             }, app.Error);
         },
         Clone: (event) => {
