@@ -1,0 +1,85 @@
+body {
+    font-family: sans;
+}
+
+#app {
+    width: 95%;
+    margin: auto;
+    text-align: center;
+}
+
+h4 {
+    margin-top: 0px;
+    margin-bottom: 5px;
+    background: black;
+    color: white;
+    padding: 10px;
+}
+
+.hash {
+    font-family: monospace;
+}
+
+.blocks {
+    margin-left: 200px;
+}
+
+.block {
+    text-align: left;
+    border: 1px solid black;
+    display: none;
+    max-height: 500px;
+    vertical-align: top;
+    margin: 10px;
+    width: 100%;
+    margin: auto;
+}
+
+.block div {
+    padding: 5px;
+}
+
+input {
+    width: 100%;
+}
+
+.value {
+    width: 100%;
+    height: 250px;
+}
+
+.selected.block {
+    display: block;
+}
+
+.selected.item {
+    color: white;
+    background: black;
+}
+
+.items {
+    width: 150px;
+    float: left;
+}
+
+.item {
+    font-size: 24px;
+    cursor: pointer;
+    display: block;
+}
+
+.item:hover {
+    color: white;
+    background: black;
+}
+
+.error {
+    position: fixed;
+    padding: 5px;
+    background: black;
+    color: white;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+

@@ -6,5 +6,4 @@ tmp
 *.install
 *.native
 *.byte
-static
 .merlin

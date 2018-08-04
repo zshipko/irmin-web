@@ -1,0 +1,7 @@
+(executables
+    (package irmin-dashboard)
+    (libraries irmin-web)
+    (names irmin_dashboard)
+    (public_names irmin-dashboard)
+    (preprocess (pps ppx_blob))
+    (modules irmin_dashboard))

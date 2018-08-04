@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Irmin</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="/irmin.js"></script>
+
+        <link rel="stylesheet" href="/static/css/index.css"></link>
+    </head>
+    <body>
+        <div id="app">
+            <h1>Irmin</h1>
+            <div class="error" v-if="error">{{error}}</div>
+            <div class="selected block" style="margin-bottom:25px">
+                <h4>Master</h4>
+                <div v-if="master.head">
+                    <div>
+                        <label>Hash:</label> <span class="hash">{{ master.head.hash }}</span>
+                    </div>
+                    <div style="max-height: 250px;">
+                        <label>Parents:</label> <ul>
+                            <li v-for="parent in master.head.parents" class="hash">
+                                {{ parent.hash }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div v-else>
+                    No commits
+                </div>
+            </div> <!-- master -->
+
+            <div class="items">
+                <div style="text-transform:capitalize;" v-for="item in items" v-bind:class="{selected: block == item, item: true}" v-on:click="block = (block == item ? '' : item)">{{item}}</div>
+            </div> <!-- items -->
+
+            <div class="blocks">
+                <div v-bind:class="{selected: block == 'get', block: true}">
+                    <h4>Get</h4>
+                    <div>
+                        <div>
+                            <input v-model="get.key" v-on:keydown.13="Get" placeholder="Key">
+                        </div>
+                        <textarea v-if="get.value" v-model="get.value" class="value"></textarea>
+                    </div>
+                </div> <!-- get -->
+
+               <div v-bind:class="{selected: block == 'clone', block: true}">
+                    <h4>Clone</h4>
+                    <div>
+                        <div>
+                            <input v-model="clone.uri" v-on:keydown.13="Clone" placeholder="Remote URI">
+                        </div>
+                    </div>
+                </div> <!-- clone -->
+
+                <div v-bind:class="{selected: block == 'set', block: true}">
+                    <h4>Set</h4>
+                    <div>
+                        <div>
+                            <input v-model="set.key" placeholder="Key">
+                        </div>
+                        <div>
+                            <textarea v-model="set.value"  v-on:keydown.shift.13="Set" class="value"></textarea>
+                        </div>
+                    </div>
+                </div> <!-- set -->
+
+            </div> <!-- blocks -->
+
+        </div> <!-- #app -->
+        <script src="/static/js/index.js"></script>
+    </body>
+</html>

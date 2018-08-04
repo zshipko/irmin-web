@@ -4,26 +4,12 @@
    %%NAME%% %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-(** Tools for building websites using irmin-graphql
+let css = ("index.css", [%blob "../../../dashboard/static/css/index.css"])
+let js =("index.js",  [%blob "../../../dashboard/static/js/index.js"])
+let html = [%blob "../../../dashboard/static/index.html"]
 
-    {e %%VERSION%% — {{:%%PKG_HOMEPAGE%% }homepage}} *)
-
-(** {1 Irmin-web} *)
-
-
-
-module Make(Store: Irmin.S): sig
-  type t
-
-  val create: Irmin.config -> t Lwt.t
-  val run: ?addr:string -> ?port:int -> ?static:string -> t -> unit Lwt.t
-  val run_simple: ?addr:string -> ?port:int -> css:string *string -> js:string * string -> html:string -> t -> unit Lwt.t
-end
-
-module Cli: sig
-  val run: string -> unit
-  val run_simple: string -> css:string *string -> js:string * string -> html:string -> unit
-end
+let _ =
+Irmin_web.Cli.run_simple ~css ~js ~html "irmin-dashboard"
 
 (*---------------------------------------------------------------------------
    Copyright (c) 2018 Zach Shipko
