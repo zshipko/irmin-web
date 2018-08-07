@@ -10,12 +10,10 @@
 
 (** {1 Irmin-web} *)
 
-
-
 module Make(Store: Irmin.S): sig
   type t
 
-  val create: Irmin.config -> t Lwt.t
+  val create: ?allow_mutations:bool -> Irmin.config -> t Lwt.t
   val run: ?addr:string -> ?port:int -> ?static:string -> t -> unit Lwt.t
   val run_simple: ?addr:string -> ?port:int -> css:string *string -> js:string * string -> html:string -> t -> unit Lwt.t
 end

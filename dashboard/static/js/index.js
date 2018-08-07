@@ -1,5 +1,3 @@
-let ir = new Irmin("http://localhost:5089/graphql");
-
 function updateMaster() {
     ir.master().then((data) => {
         app.master = data;
@@ -65,7 +63,7 @@ var app = new Vue({
                 app.set.key = '';
                 app.set.value = '';
                 updateMaster();
-            })
+            }, app.Error)
         }
     }
 });
