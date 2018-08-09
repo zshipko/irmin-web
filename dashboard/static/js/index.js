@@ -15,13 +15,19 @@ var app = new Vue({
         set: {},
         clone: {},
         list: {},
+        push: {},
+        pull: {},
+        revert: {},
         block: '',
         error: null,
         items: [
             "get",
             "list",
-            "clone",
             "set",
+            "push",
+            "clone",
+            "pull",
+            "revert"
         ]
     },
     methods: {
@@ -58,10 +64,27 @@ var app = new Vue({
                 updateMaster();
             }, app.Error)
         },
+        Push: (event) => {
+            ir.push(app.push.uri).then((x) => {
+                app.push.uri = '';
+            }, app.Error)
+        },
+        Pull: (event) => {
+            ir.pull(app.pull.uri).then((x) => {
+                app.pull.uri = '';
+                updateMaster();
+            }, app.Error)
+        },
         Set: (event) => {
             ir.set(app.set.key, app.set.value).then((x) => {
                 app.set.key = '';
                 app.set.value = '';
+                updateMaster();
+            }, app.Error)
+        },
+        Revert: (event) => {
+            ir.revert(app.revert.hash).then((x) => {
+                app.revert.hash = '';
                 updateMaster();
             }, app.Error)
         }

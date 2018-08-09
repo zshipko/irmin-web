@@ -33,6 +33,7 @@ body {
     vertical-align: top;
     width: 100%;
     margin: auto;
+    padding-bottom: 25px;
 }
 
 .block div {
@@ -50,6 +51,7 @@ input {
     margin: auto;
     display: block;
     height: 250px;
+    padding: 10px;
 }
 
 .selected.block {

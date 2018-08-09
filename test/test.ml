@@ -12,7 +12,7 @@ module Server = Irmin_web.Make(Store)
 let main =
   let cfg = Irmin_git.config "./tmp" in
   Server.create cfg >>= fun server ->
-  Server.run ~static:"../../../static" server
+  Server.run ~static:"../../../dashboard/static" server
 
 let _ = Lwt_main.run main
 

@@ -51,13 +51,28 @@
                         <div>
                             <input v-model="list.key" v-on:keydown.13="List" placeholder="Key">
                         </div>
-                        <ul>
-                            <li v-for="item in list.items">
-                                <pre class="key">{{item.key}}</pre>
-                            </li>
-                        </ul>
+                        <div v-if="list.items && list.items.length > 0">
+                            <ul>
+                                <li v-for="item in list.items">
+                                    <pre class="key">{{item.key}}</pre>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div> <!-- list -->
+
+                <div v-bind:class="{selected: block == 'set', block: true}">
+                    <h4>Set</h4>
+                    <div>
+                        <div>
+                            <input v-model="set.key" placeholder="Key">
+                        </div>
+                        <div>
+                            <textarea v-model="set.value" placeholder="Shift+Enter to submit" v-on:keydown.shift.13="Set" class="value"></textarea>
+                        </div>
+
+                    </div>
+                </div> <!-- set -->
 
                <div v-bind:class="{selected: block == 'clone', block: true}">
                     <h4>Clone</h4>
@@ -68,18 +83,33 @@
                     </div>
                 </div> <!-- clone -->
 
-                <div v-bind:class="{selected: block == 'set', block: true}">
-                    <h4>Set</h4>
+
+               <div v-bind:class="{selected: block == 'push', block: true}">
+                    <h4>Push</h4>
                     <div>
                         <div>
-                            <input v-model="set.key" placeholder="Key">
+                            <input v-model="push.uri" v-on:keydown.13="Push" placeholder="Remote URI">
                         </div>
-                        <div>
-                            <textarea v-model="set.value"  v-on:keydown.shift.13="Set" class="value"></textarea>
-                        </div>
-                        <button v-on:click="Set">Set</button>
                     </div>
-                </div> <!-- set -->
+                </div> <!-- push -->
+
+               <div v-bind:class="{selected: block == 'pull', block: true}">
+                    <h4>Pull</h4>
+                    <div>
+                        <div>
+                            <input v-model="pull.uri" v-on:keydown.13="Pull" placeholder="Remote URI">
+                        </div>
+                    </div>
+                </div> <!-- pull -->
+
+               <div v-bind:class="{selected: block == 'revert', block: true}">
+                    <h4>Revert</h4>
+                    <div>
+                        <div>
+                            <input v-model="revert.hash" v-on:keydown.13="Revert" placeholder="Commit hash">
+                        </div>
+                    </div>
+                </div> <!-- revert -->
 
             </div> <!-- blocks -->
 
