@@ -10,6 +10,8 @@
 
 (** {1 Irmin-web} *)
 
+val read_file: string -> string
+
 module Make(Store: Irmin.S): sig
   type t
 
@@ -20,7 +22,7 @@ end
 
 module Cli: sig
   val run: string -> unit
-  val run_simple: string -> css:string *string -> js:string * string -> html:string -> unit
+  val run_simple: string -> css:string * string -> js:string * string -> html:string -> unit
 end
 
 (*---------------------------------------------------------------------------

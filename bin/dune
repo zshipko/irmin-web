@@ -1,0 +1,6 @@
+(executables
+    (package irmin-web)
+    (libraries irmin-web)
+    (names main)
+    (public_names irmin-web))
+

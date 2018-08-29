@@ -10,9 +10,13 @@ external realpath: string -> string = "ml_realpath"
 
 let irmin_js = [%blob "../../js/irmin.js"]
 
+let read_file filename =
+  let ic = open_in filename in
+  let len = in_channel_length ic in
+  let res = really_input_string ic len in
+  close_in ic; res
 
 module Make(Store: Irmin.S) = struct
-
   module Graphql = Irmin_graphql.Make(Store)
 
   type t = {
@@ -55,7 +59,7 @@ module Make(Store: Irmin.S) = struct
           Yurt.Server.string ~status:400 "Encountered blacklisted operation"
     | Error _ -> Yurt.Server.string ~status:400 "Invalid GraphQL query"
 
-  let run ?(addr = "localhost") ?(port = 5089) ?(static = "./static") t =
+  let run ?(addr = "localhost") ?(port = 5089) ?(static = "./") t =
     let open Yurt.Server in
     let static = realpath static in
     let graphql_port = port + 1 in
