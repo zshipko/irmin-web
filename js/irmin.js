@@ -92,8 +92,8 @@ class Irmin {
                 body: query.get,
                 variables: {
                     key: key.string(),
-                    branch: branch
-                }
+                    branch: branch,
+                },
             }).then((x) => {
                 resolve(x.branch.get)
             }, reject);
@@ -233,17 +233,17 @@ class Irmin {
         });
     }
 
-    list(key, branch=null){
+    list(key, branch="master"){
         key = makeKey(key);
         return new Promise((resolve, reject) => {
             this.execute({
-                body: branch == null ? query.listMaster : query.list,
+                body: query.list,
                 variables: {
                     key: key.string(),
                     branch: branch,
                 }
             }).then((x) => {
-                resolve((branch == null ? x.master : x.branch).head.node.get.tree)
+                resolve(x.branch.head.node.get.tree)
             }, reject)
         })
     }
@@ -253,7 +253,7 @@ class Irmin {
 query = {
 get:
 `
-query GetKey($branch: String!, $key: String!) {
+query Get($branch: String!, $key: String!) {
     branch(name: $branch) {
         get(key: $key) {
             value
@@ -264,7 +264,7 @@ query GetKey($branch: String!, $key: String!) {
 
 set:
 `
-mutation SetKey($branch: String, $key: String!, $value: String!) {
+mutation Set($branch: String, $key: String!, $value: String!) {
     set(branch: $branch, key: $key, value: $value, info: null) {
         hash
     }
@@ -273,7 +273,7 @@ mutation SetKey($branch: String, $key: String!, $value: String!) {
 
 remove:
 `
-mutation RemoveKey($branch: String, $key: String!) {
+mutation Remove($branch: String, $key: String!) {
     remove(branch: $branch, key: $key, info: null) {
         hash
     }
@@ -380,24 +380,6 @@ query List($branch: String!, $key: String!) {
     }
 }
 `,
-
-listMaster:
-`
-query ListMaster($key: String!) {
-    master {
-        head {
-            node {
-                get(key: $key) {
-                    tree {
-                        key,
-                        value
-                    }
-                }
-            }
-        }
-    }
-}
-`
 
 };
 
