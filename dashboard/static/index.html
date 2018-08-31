@@ -74,6 +74,15 @@
                     </div>
                 </div> <!-- set -->
 
+              <div v-bind:class="{selected: block == 'remove', block: true}">
+                    <h4>Remove</h4>
+                    <div>
+                        <div>
+                            <input v-model="remove.key" v-on:keydown.13="Remove" placeholder="Key">
+                        </div>
+                    </div>
+                </div> <!-- remove -->
+
                <div v-bind:class="{selected: block == 'clone', block: true}">
                     <h4>Clone</h4>
                     <div>

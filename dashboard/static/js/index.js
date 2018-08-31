@@ -13,6 +13,7 @@ var app = new Vue({
         master: {},
         get: {},
         set: {},
+        remove: {},
         clone: {},
         list: {},
         push: {},
@@ -24,6 +25,7 @@ var app = new Vue({
             "get",
             "list",
             "set",
+            "remove",
             "push",
             "clone",
             "pull",
@@ -79,6 +81,12 @@ var app = new Vue({
             ir.set(app.set.key, app.set.value).then((x) => {
                 app.set.key = '';
                 app.set.value = '';
+                updateMaster();
+            }, app.Error)
+        },
+        Remove: (event) => {
+            ir.remove(app.remove.key).then((x) => {
+                app.remove.key = '';
                 updateMaster();
             }, app.Error)
         },
