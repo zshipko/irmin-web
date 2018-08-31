@@ -2,7 +2,7 @@ irmin-web
 -------------------------------------------------------------------------------
 %%VERSION%%
 
-irmin-web is a tool for building web applications using Irmin. It uses [irmin.js](https://github.com/zshipko/irmin-web/blob/master/js/irmin.js) to communicate with an [irmin-graohql](https://github.com/andreas/irmin-graphql) server.
+irmin-web is a tool for building web applications using Irmin. It uses [irmin.js](https://github.com/zshipko/irmin-js) to communicate with an [irmin-graohql](https://github.com/andreas/irmin-graphql) server.
 
 irmin-web is distributed under the ISC license.
 
@@ -21,16 +21,28 @@ instructions.
 
 ## Getting started
 
-Here is an example of a single page application with one HTML file, one JS file and one CSS file:
+The following is an example of a single page application with one HTML file, one JS file and one CSS file. It will display the hash of the latest commit on the master branch when the page is loaded.
 
-```ocaml
-let css = ("index.css", {| body {background: read; color: white;} |})
-let js = ("index.js", {|\
+css/index.css:
+
+```css
+body {
+    background: black;
+    color: white;
+}
+```
+
+js/index.js:
+
+```javascript
 ir.master().then((t) => {
     document.querySelector(".hash").innerHTML = t.head.hash;
 })
-})
-let html = {|
+```
+
+index.html:
+
+```html
 <html>
     <head>
         <link rel="stylesheet" href="/static/css/index.css" />
@@ -41,9 +53,22 @@ let html = {|
         <script src="/static/js/index.js"></script>
     </body>
 </html>
-|}
-let _ =
-Irmin_web.Cli.run_simple ~css ~js ~html "irmin-dashboard"
+```
+
+```ocaml
+open Lwt.Infix
+open Irmin_unix
+module Store = Git.FS.KV(Irmin.Contents.String)
+module Web = Irmin_web.Make(Store)
+
+let config = Irmin_git.config "/tmp/irmin"
+
+let main =
+    let allow_mutations = false in
+    Web.create ~allow_mutations config >>= fun t ->
+    Web.run t
+
+let () = Lwt_main.run main
 ```
 
 ## Documentation
