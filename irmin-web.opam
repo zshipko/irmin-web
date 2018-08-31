@@ -18,6 +18,7 @@ depends:
     "irmin-graphql"
     "yurt"
     "cmdliner"
+    "ppx_blob"
 ]
 
 depopts: []
