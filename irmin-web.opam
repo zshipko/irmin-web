@@ -13,6 +13,10 @@ available: [ ocaml-version >= "4.03.0"]
 depends:
 [
     "dune" {build}
+    "astring"
+    "irmin-unix"
+    "irmin-graphql"
+    "yurt"
 ]
 
 depopts: []
