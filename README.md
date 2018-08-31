@@ -21,7 +21,7 @@ instructions.
 
 ## Getting started
 
-The following is an example of a single page application with one HTML file, one JS file and one CSS file. It will display the hash of the latest commit on the master branch when the page is loaded.
+The following is an example of a simple website that will display the hash of the latest commit on the master branch when the page is loaded.
 
 css/index.css:
 
