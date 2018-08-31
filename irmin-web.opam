@@ -17,6 +17,7 @@ depends:
     "irmin-unix"
     "irmin-graphql"
     "yurt"
+    "cmdliner"
 ]
 
 depopts: []
