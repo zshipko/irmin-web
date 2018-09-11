@@ -136,26 +136,35 @@ module Cli = struct
     let head = Git.Reference.of_string "refs/heads/master" in
     Irmin_git.config ~head path
 
-  let run_simple name ~css ~js ~html =
+  let print_info port root static =
+    Lwt_io.printlf "Running irmin-web\n\n\tport = %d\n\tstore = %s\n\tstatic dir = %s" port root static
+
+  let run_simple ?print_info:(pi = true) name ~css ~js ~html =
     let run port root contents store allow_mutations =
       let c = Irmin_unix.Cli.mk_contents contents in
       let (module Store) = Irmin_unix.Cli.mk_store store c in
       let module Server = Make(Store) in
       let p =
         Server.create ~allow_mutations (config root) >>= fun server ->
+        (if pi then
+          print_info port root "<simple>"
+        else Lwt.return ()) >>= fun () ->
         Server.run_simple ~css ~js ~html ~port server
       in Lwt_main.run p
     in
     let main_t = Term.(const run $ port $ root $ contents $ store $ mutations) in
     Term.exit @@ Term.eval (main_t, Term.info name)
 
-  let run name =
+  let run ?print_info:(pi = true) name =
     let run port root contents store static allow_mutations =
       let c = Irmin_unix.Cli.mk_contents contents in
       let (module Store) = Irmin_unix.Cli.mk_store store c in
       let module Server = Make(Store) in
       let p =
         Server.create ~allow_mutations (config root) >>= fun server ->
+        (if pi then
+          print_info port root static
+        else Lwt.return ()) >>= fun () ->
         Server.run ~static ~port server
       in Lwt_main.run p
     in

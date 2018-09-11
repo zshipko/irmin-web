@@ -21,8 +21,8 @@ module Make(Store: Irmin.S): sig
 end
 
 module Cli: sig
-  val run: string -> unit
-  val run_simple: string -> css:string * string -> js:string * string -> html:string -> unit
+  val run: ?print_info:bool -> string -> unit
+  val run_simple: ?print_info:bool -> string -> css:string * string -> js:string * string -> html:string -> unit
 end
 
 (*---------------------------------------------------------------------------
