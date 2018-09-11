@@ -125,8 +125,8 @@ module Cli = struct
     Arg.(value & opt string "/tmp/irmin" & info ["root"] ~docv:"PATH" ~doc)
 
   let static =
-    let doc = "Static path" in
-    Arg.(value & pos 0 (some string) None  & info [] ~docv:"PATH" ~doc)
+    let doc = "Static file path" in
+    Arg.(required & pos 0 (some string) None  & info [] ~docv:"STATIC" ~doc)
 
   let mutations =
     let doc = "Enable/disable mutations" in
@@ -156,7 +156,7 @@ module Cli = struct
       let module Server = Make(Store) in
       let p =
         Server.create ~allow_mutations (config root) >>= fun server ->
-        Server.run ?static ~port server
+        Server.run ~static ~port server
       in Lwt_main.run p
     in
     let main_t = Term.(const run $ port $ root $ contents $ store $ static $ mutations) in
