@@ -110,7 +110,7 @@ module Cli = struct
 
   let port =
     let doc = "Port to listen on" in
-    Arg.(value & pos 0 (some int) None & info [] ~docv:"PORT" ~doc)
+    Arg.(value & opt int 8080 & info ["p"; "port"] ~docv:"PORT" ~doc)
 
   let contents =
     let doc = "Content type" in
@@ -126,7 +126,7 @@ module Cli = struct
 
   let static =
     let doc = "Static path" in
-    Arg.(value & opt string "static" & info ["static"] ~docv:"PATH" ~doc)
+    Arg.(value & pos 0 (some string) None  & info [] ~docv:"PATH" ~doc)
 
   let mutations =
     let doc = "Enable/disable mutations" in
@@ -143,7 +143,7 @@ module Cli = struct
       let module Server = Make(Store) in
       let p =
         Server.create ~allow_mutations (config root) >>= fun server ->
-        Server.run_simple ~css ~js ~html ?port server
+        Server.run_simple ~css ~js ~html ~port server
       in Lwt_main.run p
     in
     let main_t = Term.(const run $ port $ root $ contents $ store $ mutations) in
@@ -156,7 +156,7 @@ module Cli = struct
       let module Server = Make(Store) in
       let p =
         Server.create ~allow_mutations (config root) >>= fun server ->
-        Server.run ~static ?port server
+        Server.run ?static ~port server
       in Lwt_main.run p
     in
     let main_t = Term.(const run $ port $ root $ contents $ store $ static $ mutations) in
