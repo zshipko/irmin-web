@@ -2,7 +2,7 @@ irmin-web
 -------------------------------------------------------------------------------
 %%VERSION%%
 
-irmin-web is a tool for building web applications using Irmin. It uses [irmin.js](https://github.com/zshipko/irmin-js) to communicate with an [irmin-graohql](https://github.com/andreas/irmin-graphql) server.
+irmin-web is a tool for building web applications using Irmin. It uses [irmin.js](https://github.com/zshipko/irmin-js) to communicate with an [irmin-graohql](https://github.com/andreas/irmin-graphql) server. The goal for this project is to keep it as generic as possible, allowing users to build whatever they'd like.
 
 irmin-web is distributed under the ISC license.
 
@@ -19,7 +19,7 @@ irmin-web can be installed with `opam`:
 If you don't use `opam` consult the [`opam`](opam) file for build
 instructions.
 
-## Getting started
+## A basic example using OCaml
 
 The following is an example of a simple website that will display the hash of the latest commit on the master branch when the page is loaded.
 
@@ -69,6 +69,14 @@ let main =
     Web.run t
 
 let () = Lwt_main.run main
+```
+
+For another example, see [irmin-dashboard](https://github.com/zshipko/irmin-web/tree/master/dashboard).
+
+You can also run `irmin-dashboard` from the command line using `dune`:
+
+```shell
+>>> dune exec dashboard/irmin_dashboard.exe" -- --root=/path/to/my/repo
 ```
 
 ## Documentation
