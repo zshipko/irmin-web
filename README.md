@@ -10,8 +10,6 @@ Homepage: https://github.com/zshipko/irmin-web
 
 ## Installation
 
-`irmin-web` depends on [irmin-graphql](https://github.com/andreas/irmin-graphql) and [yurt](https://github.com/zshipko.yurt):
-
 irmin-web can be installed with `opam`:
 
     opam pin add irmin-web https://github.com/zshipko/irmin-web.git
