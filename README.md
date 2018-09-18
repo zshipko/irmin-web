@@ -74,7 +74,22 @@ For another example, see [irmin-dashboard](https://github.com/zshipko/irmin-web/
 You can also run `irmin-dashboard` from the command line using `dune`:
 
 ```shell
->>> dune exec dashboard/irmin_dashboard.exe" -- --root=/path/to/my/repo
+$ dune exec dashboard/irmin_dashboard.exe" -- --root=/path/to/my/repo
+```
+
+## Docker
+
+There is a Dockerfile in the project root that allows you to deploy your irmin-web projects:
+
+```shell
+$ docker build -f Dockerfile /path/to/my/static/dir
+```
+
+The static file path can also be set using an environment variable:
+
+or ``shell
+$ export IRMIN_WEB_ROOT=/path/to/my/static/dir
+$ docker build .
 ```
 
 ## Documentation
