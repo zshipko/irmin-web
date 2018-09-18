@@ -5,6 +5,10 @@ let port =
   let doc = "Port to listen on" in
   Arg.(value & opt int 8080 & info ["p"; "port"] ~docv:"PORT" ~doc)
 
+let address =
+  let doc = "Address to listen on" in
+  Arg.(value & opt string "localhost" & info ["a"; "address"] ~docv:"ADDR" ~doc)
+
 let contents =
   let doc = "Content type" in
   Arg.(value & opt string "string" & info ["c"; "contents"] ~docv:"CONTENTS" ~doc)
@@ -33,7 +37,7 @@ let print_info port root static =
   Lwt_io.printlf "Running irmin-web\n\n\tport = %d\n\tstore = %s\n\tstatic dir = %s" port root static
 
 let run_simple ?print_info:(pi = true) name ~css ~js ~html =
-  let run port root contents store allow_mutations =
+  let run address port root contents store allow_mutations =
     let c = Irmin_unix.Cli.mk_contents contents in
     let (module Store) = Irmin_unix.Cli.mk_store store c in
     let module Server = Web.Make(Store) in
@@ -42,14 +46,14 @@ let run_simple ?print_info:(pi = true) name ~css ~js ~html =
       (if pi then
         print_info port root "<simple>"
       else Lwt.return ()) >>= fun () ->
-      Server.run_simple ~css ~js ~html ~port server
+      Server.run_simple ~addr:address ~css ~js ~html ~port server
     in Lwt_main.run p
   in
-  let main_t = Term.(const run $ port $ root $ contents $ store $ mutations) in
+  let main_t = Term.(const run $ address $ port $ root $ contents $ store $ mutations) in
   Term.exit @@ Term.eval (main_t, Term.info name)
 
 let run ?print_info:(pi = true) name =
-  let run port root contents store static allow_mutations =
+  let run address port root contents store static allow_mutations =
     let c = Irmin_unix.Cli.mk_contents contents in
     let (module Store) = Irmin_unix.Cli.mk_store store c in
     let module Server = Web.Make(Store) in
@@ -58,8 +62,8 @@ let run ?print_info:(pi = true) name =
       (if pi then
         print_info port root static
       else Lwt.return ()) >>= fun () ->
-      Server.run ~static ~port server
+      Server.run ~addr:address ~static ~port server
     in Lwt_main.run p
   in
-  let main_t = Term.(const run $ port $ root $ contents $ store $ static $ mutations) in
+  let main_t = Term.(const run $ address $ port $ root $ contents $ store $ static $ mutations) in
   Term.exit @@ Term.eval (main_t, Term.info name)
