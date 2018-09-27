@@ -2,7 +2,7 @@ irmin-web
 -------------------------------------------------------------------------------
 %%VERSION%%
 
-irmin-web is a tool for building web applications using Irmin. It uses [irmin.js](https://github.com/zshipko/irmin-js) to communicate with an [irmin-graohql](https://github.com/andreas/irmin-graphql) server. The goal for this project is to keep it as generic as possible, allowing users to build whatever they'd like.
+irmin-web is a tool for building web applications using Irmin. It uses [irmin.js](https://github.com/zshipko/irmin-js) to communicate with an [irmin-graphql](https://github.com/andreas/irmin-graphql) server. The goal for this project is to keep it as generic as possible, allowing users to build whatever they'd like.
 
 irmin-web is distributed under the ISC license.
 
