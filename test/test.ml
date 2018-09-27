@@ -7,12 +7,21 @@
 open Lwt.Infix
 
 module Store = Irmin_unix.Git.FS.KV(Irmin.Contents.String)
-module Server = Irmin_web.Make(Store)
+module Server = Irmin_web.Make(struct
+  include Store
+  let info = Irmin_unix.info
+  let remote = Some Store.remote
+end)
+
+let html = [%blob "test.html"]
+let js = ("test.js", [%blob "test.js"])
+let css = ("test.css", [%blob "test.css"])
 
 let main =
   let cfg = Irmin_git.config "./tmp" in
-  Server.create cfg >>= fun server ->
-  Server.run ~static:"../../../dashboard/static" server
+  Store.Repo.v cfg >>= Store.master >>= fun s ->
+    let server = Server.create ~allow_mutations:true s in
+  Server.run_simple ~html ~js ~css server
 
 let _ = Lwt_main.run main
 

@@ -33,37 +33,46 @@ let config path =
   let head = Git.Reference.of_string "refs/heads/master" in
   Irmin_git.config ~head path
 
-let print_info port root static =
-  Lwt_io.printlf "Running irmin-web\n\n\tport = %d\n\tstore = %s\n\tstatic dir = %s" port root static
+let print_info port static =
+  Lwt_io.printlf "Running irmin-web\n\n\tport = %d\n\tstatic dir = %s" port static
 
 let run_simple ?print_info:(pi = true) name ~css ~js ~html =
-  let run address port root contents store allow_mutations =
-    let c = Irmin_unix.Cli.mk_contents contents in
-    let (module Store) = Irmin_unix.Cli.mk_store store c in
+  let run address port (Irmin_unix.Resolver.S ((module Store), store, remote_fn)) allow_mutations =
+    let module Store = struct
+      include Store
+      let info = Irmin_unix.info
+      let remote = remote_fn
+    end in
     let module Server = Web.Make(Store) in
     let p =
-      Server.create ~allow_mutations (config root) >>= fun server ->
+      store >>= fun store ->
+      let server = Server.create ~allow_mutations store in
       (if pi then
-        print_info port root "<simple>"
+        print_info port "<simple>"
       else Lwt.return ()) >>= fun () ->
       Server.run_simple ~addr:address ~css ~js ~html ~port server
     in Lwt_main.run p
   in
-  let main_t = Term.(const run $ address $ port $ root $ contents $ store $ mutations) in
+  let main_t = Term.(const run $ address $ port $ Irmin_unix.Resolver.store $ mutations) in
   Term.exit @@ Term.eval (main_t, Term.info name)
 
 let run ?print_info:(pi = true) name =
-  let run address port root contents store static allow_mutations =
-    let c = Irmin_unix.Cli.mk_contents contents in
-    let (module Store) = Irmin_unix.Cli.mk_store store c in
+  let run address port (Irmin_unix.Resolver.S ((module Store), store, remote_fn)) static allow_mutations =
+    let module Store = struct
+      include Store
+      let info = Irmin_unix.info
+      let remote = remote_fn
+    end in
+    let module Server = Web.Make(Store) in
     let module Server = Web.Make(Store) in
     let p =
-      Server.create ~allow_mutations (config root) >>= fun server ->
+      store >>= fun store ->
+        let server = Server.create ~allow_mutations store in
       (if pi then
-        print_info port root static
+        print_info port static
       else Lwt.return ()) >>= fun () ->
       Server.run ~addr:address ~static ~port server
     in Lwt_main.run p
   in
-  let main_t = Term.(const run $ address $ port $ root $ contents $ store $ static $ mutations) in
+  let main_t = Term.(const run $ address $ port $ Irmin_unix.Resolver.store $ static $ mutations) in
   Term.exit @@ Term.eval (main_t, Term.info name)

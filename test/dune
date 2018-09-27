@@ -1,10 +1,11 @@
 (executables
-    (libraries irmin-web)
+    (libraries digestif.c irmin-web)
     (names test)
+    (preprocess (pps ppx_blob))
     (modules test))
 
 (alias
     (name runtest)
     (package irmin-web)
-    (deps test.exe)
+    (deps test.exe test.html test.js test.css)
     (action (run %{dep:test.exe})))

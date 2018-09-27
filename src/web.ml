@@ -10,23 +10,19 @@ let read_file filename =
   let res = really_input_string ic len in
   close_in ic; res
 
-module Make(Store: Irmin.S) = struct
+module Make(Store: Irmin_graphql.STORE) = struct
   module Graphql = Irmin_graphql.Make(Store)
 
   type t = {
-    cfg: Irmin.config;
-    repo: Store.repo;
+    store: Store.t;
     allow_mutations: bool;
   }
 
-  let create ?(allow_mutations = true) cfg =
-    Store.Repo.v cfg >|= fun repo ->
-    {cfg; repo; allow_mutations}
+  let create ?(allow_mutations = true) store =
+    {store; allow_mutations}
 
   let start_graphql_server t port =
-    Store.Repo.v t.cfg >>= fun repo ->
-    Store.master repo >>= fun master ->
-    Graphql.start_server ~port master
+    Graphql.start_server ~port t.store
 
   let check t doc =
     let open Graphql_parser in

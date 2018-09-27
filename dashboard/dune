@@ -1,6 +1,6 @@
 (executables
     (package irmin-dashboard)
-    (libraries irmin-web)
+    (libraries digestif.c irmin-web)
     (names irmin_dashboard)
     (public_names irmin-dashboard)
     (preprocess (pps ppx_blob))
