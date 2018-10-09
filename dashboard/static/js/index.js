@@ -1,5 +1,7 @@
+ir = ir.master();
+
 function updateMaster() {
-    ir.master().then((data) => {
+    ir.info().then((data) => {
         app.master = data;
         app.$forceUpdate();
     });

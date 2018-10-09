@@ -13,14 +13,14 @@ module Server = Irmin_web.Make(struct
   let remote = Some Store.remote
 end)
 
-let html = [%blob "test.html"]
-let js = ("test.js", [%blob "test.js"])
-let css = ("test.css", [%blob "test.css"])
+let html = [%blob "../../test/test.html"]
+let js = ("test.js", [%blob "../../test/test.js"])
+let css = ("test.css", [%blob "../../test/test.css"])
 
 let main =
   let cfg = Irmin_git.config "./tmp" in
   Store.Repo.v cfg >>= Store.master >>= fun s ->
-    let server = Server.create ~allow_mutations:true s in
+  let server = Server.create ~allow_mutations:true s in
   Server.run_simple ~html ~js ~css server
 
 let _ = Lwt_main.run main

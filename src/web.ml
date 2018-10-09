@@ -49,7 +49,7 @@ module Make(Store: Irmin_graphql.STORE) = struct
           Yurt.Server.string ~status:400 "Encountered blacklisted operation"
     | Error _ -> Yurt.Server.string ~status:400 "Invalid GraphQL query"
 
-  let run ?handler ?(addr = "localhost") ?(port = 5089) ?(static = "./") t =
+  let run ?handler ?(addr = "localhost") ?(port = 8080) ?(static = "./") t =
     let open Yurt.Server in
     let static = realpath static in
     let graphql_port = port + 1 in
@@ -70,7 +70,7 @@ module Make(Store: Irmin_graphql.STORE) = struct
     end
     |> start
 
-  let run_simple ?handler ?(addr = "localhost") ?(port = 5089) ~css ~js ~html t =
+  let run_simple ?handler ?(addr = "localhost") ?(port = 8080) ~css ~js ~html t =
     let html' = html in
     let open Yurt.Server in
     let graphql_port = port + 1 in

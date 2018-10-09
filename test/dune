@@ -7,5 +7,5 @@
 (alias
     (name runtest)
     (package irmin-web)
-    (deps test.exe test.html test.js test.css)
+    (deps test.exe)
     (action (run %{dep:test.exe})))

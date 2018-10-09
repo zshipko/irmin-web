@@ -1,24 +1,16 @@
 <html>
     <head>
-        <script src="/irmin.js"></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Irmin</title>
+        <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.6.2.css">
         <link rel="stylesheet" href="/static/css/test.css" />
+        <script src="/irmin.js"></script>
     </head>
     <body>
-        <table>
-            <tr>
-                <td>Total</td>
-                <td><span id="total">0</span></td>
-            </tr>
-            <tr>
-                <td>Passed</td>
-                <td><span id="passed"></span></td>
-            </tr>
-            <tr>
-                <td>Failed</td>
-                <td><span id="failed"></span></td>
-            </tr>
-        </table>
-        <span id="errors"></span>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+        <script src="https://code.jquery.com/qunit/qunit-2.6.2.js"></script>
         <script src="/static/js/test.js"></script>
     </body>
 </html>
