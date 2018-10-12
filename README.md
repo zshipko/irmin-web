@@ -17,6 +17,14 @@ irmin-web can be installed with `opam`:
 If you don't use `opam` consult the [`opam`](opam) file for build
 instructions.
 
+Additionally, there are some browser-based tests for `irmin-js`. To start the server:
+
+```shell
+$ make test
+```
+
+Then visit [http://localhost:8080](http://localhost:8080) to execute the tests.
+
 ## A basic example using OCaml
 
 The following is an example of a simple website that will display the hash of the latest commit on the master branch when the page is loaded.
@@ -100,10 +108,4 @@ irmin-web`.
 
 [doc]: https://zshipko.github.io/irmin-web/doc
 
-## Tests
 
-In the distribution sample programs and tests are located in the
-[`test`](test) directory. They can be built and run
-with:
-
-    dune runtest
