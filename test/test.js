@@ -87,3 +87,16 @@ QUnit.test("Pull", function(assert){
     });
 });
 
+QUnit.test("Merge", function(assert){
+    let done = assert.async();
+    let aaa = ir.branch('aaa');
+    aaa.merge('master').then(res => {
+        aaa.get('README.md').then(res => {
+            assert.ok(res != null);
+            assert.ok(res.length > 0);
+            assert.ok(res.startsWith('irmin-web'));
+            done();
+        });
+    });
+});
+
