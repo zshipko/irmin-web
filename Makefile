@@ -3,4 +3,5 @@ build:
 	dune clean && dune build
 
 test: build
+	rm -r _build
 	dune runtest
