@@ -32,8 +32,7 @@ QUnit.test("List", function(assert){
     let master = ir.master();
     master.list().then(res => {
         assert.ok(res.length === 1);
-        assert.ok(res[0].key === "/abc")
-        assert.ok(res[0].value === "1234")
+        assert.ok(res["abc"] === "1234")
         done();
     }, err => {
         assert.ok(false);
