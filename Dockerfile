@@ -7,12 +7,6 @@ RUN opam update
 
 WORKDIR /src
 ENV OPAMYES 1
-RUN opam pin add decompress.dev --dev
-RUN opam pin add digestif.dev --dev
-RUN opam pin add checkseum.dev --dev
-RUN opam pin add git.dev --dev
-RUN opam pin add git-http.dev --dev
-RUN opam pin add git-unix.dev --dev
 RUN opam pin add irmin.dev --dev
 RUN opam pin add irmin-mem.dev --dev
 RUN opam pin add irmin-fs.dev --dev
