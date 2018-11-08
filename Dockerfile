@@ -12,8 +12,8 @@ RUN opam pin add irmin-mem.dev --dev
 RUN opam pin add irmin-fs.dev --dev
 RUN opam pin add irmin-http.dev --dev
 RUN opam pin add irmin-git.dev --dev
+RUN opam pin add irmin-graphql.dev https://github.com/mirage/irmin.git
 RUN opam pin add irmin-unix.dev --dev
-RUN opam pin add irmin-graphql.dev https://github.com/zshipko/irmin.git#graphql-integration
 RUN opam pin add irmin-web.dev https://github.com/zshipko/irmin-web.git
 
 FROM alpine
