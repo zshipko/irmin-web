@@ -95,7 +95,7 @@ $ docker build -f Dockerfile /path/to/my/static/dir
 
 The static file path can also be set using an environment variable:
 
-or ``shell
+```shell
 $ export IRMIN_WEB_ROOT=/path/to/my/static/dir
 $ docker build .
 ```
