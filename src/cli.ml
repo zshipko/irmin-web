@@ -10,19 +10,6 @@ let address =
   Arg.(
     value & opt string "localhost" & info ["a"; "address"] ~docv:"ADDR" ~doc)
 
-let contents =
-  let doc = "Content type" in
-  Arg.(
-    value & opt string "string" & info ["c"; "contents"] ~docv:"CONTENTS" ~doc)
-
-let store =
-  let doc = "Store type" in
-  Arg.(value & opt string "git" & info ["s"; "store"] ~docv:"STORE" ~doc)
-
-let root =
-  let doc = "Store location" in
-  Arg.(value & opt string "/tmp/irmin" & info ["root"] ~docv:"PATH" ~doc)
-
 let static =
   let doc = "Static file path" in
   Arg.(required & pos 0 (some string) None & info [] ~docv:"STATIC" ~doc)
