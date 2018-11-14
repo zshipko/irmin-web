@@ -72,7 +72,7 @@ let config = Irmin_git.config "/tmp/irmin"
 let main =
     let allow_mutations = false in
     Web.create ~allow_mutations config >>= fun t ->
-    Web.run t
+    Web.run_custom t
 
 let () = Lwt_main.run main
 ```

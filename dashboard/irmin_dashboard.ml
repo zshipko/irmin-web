@@ -6,7 +6,8 @@
 let css = ("index.css", [%blob "../../../dashboard/static/css/index.css"])
 let js = ("index.js", [%blob "../../../dashboard/static/js/index.js"])
 let html = [%blob "../../../dashboard/static/index.html"]
-let _ = Irmin_web.Cli.run_simple ~css ~js ~html "irmin-dashboard"
+let title = "Irmin"
+let _ = Irmin_web.Cli.run ~title ~css ~js ~html "irmin-dashboard"
 
 (*---------------------------------------------------------------------------
   Copyright (c) 2018 Zach Shipko

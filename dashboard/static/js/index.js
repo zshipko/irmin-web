@@ -57,7 +57,7 @@ var app = new Vue({
         },
         List: (event) => {
             ir.list(app.list.key).then((x) => {
-                app.list.items = x;
+                app.list.items = Object.keys(x);
                 app.list.key = '';
                 app.$forceUpdate();
             }, app.Error);
