@@ -1,8 +1,9 @@
+var irmin = ir;
 ir = ir.master();
 
-function updateMaster() {
+function updateBranch() {
     ir.info().then((data) => {
-        app.master = data;
+        app.branch = data;
         app.$forceUpdate();
     });
 }
@@ -12,7 +13,7 @@ var errorTimeout = null;
 var app = new Vue({
     el: '#app',
     data: {
-        master: {},
+        branch: {},
         get: {},
         set: {},
         remove: {},
@@ -21,9 +22,11 @@ var app = new Vue({
         push: {},
         pull: {},
         revert: {},
+        switchBranch: {},
         block: '',
         error: null,
         items: [
+            "branch",
             "get",
             "list",
             "set",
@@ -43,6 +46,10 @@ var app = new Vue({
                 app.error = null;
                 app.$forceUpdate();
             }, 3500);
+        },
+        SwitchBranch: (event) => {
+            ir = app.switchBranch.name === "master" ? irmin.master() : irmin.branch(app.switchBranch.name);
+            updateBranch();
         },
         Show: (key) => {
             app.block = 'get';
@@ -75,7 +82,7 @@ var app = new Vue({
         Clone: (event) => {
             ir.clone(app.clone.uri).then((x) => {
                 app.clone.uri = '';
-                updateMaster();
+                updateBranch();
             }, app.Error)
         },
         Push: (event) => {
@@ -86,29 +93,29 @@ var app = new Vue({
         Pull: (event) => {
             ir.pull(app.pull.uri).then((x) => {
                 app.pull.uri = '';
-                updateMaster();
+                updateBranch();
             }, app.Error)
         },
         Set: (event) => {
             ir.set(app.set.key, app.set.value).then((x) => {
                 app.set.key = '';
                 app.set.value = '';
-                updateMaster();
+                updateBranch();
             }, app.Error)
         },
         Remove: (event) => {
             ir.remove(app.remove.key).then((x) => {
                 app.remove.key = '';
-                updateMaster();
+                updateBranch();
             }, app.Error)
         },
         Revert: (event) => {
             ir.revert(app.revert.hash).then((x) => {
                 app.revert.hash = '';
-                updateMaster();
+                updateBranch();
             }, app.Error)
         }
     }
 });
 
-updateMaster();
+updateBranch();

@@ -3,14 +3,14 @@
     <h1>Irmin</h1>
     <div class="error" v-if="error">{{error}}</div>
     <div class="selected block" style="margin-bottom:25px">
-        <h4>Master</h4>
-        <div v-if="master.head">
+        <h4>{{branch.name}}</h4>
+        <div v-if="branch.head">
             <div>
-                <label>Hash:</label> <span class="hash">{{ master.head.hash }}</span>
+                <label>Hash:</label> <span class="hash">{{ branch.head.hash }}</span>
             </div>
             <div style="max-height: 250px;">
                 <label>Parents:</label> <ul>
-                    <li v-for="parent in master.head.parents" class="hash">
+                    <li v-for="parent in branch.head.parents" class="hash">
                         {{ parent.hash }}
                     </li>
                 </ul>
@@ -19,13 +19,23 @@
         <div v-else>
             No commits
         </div>
-    </div> <!-- master -->
+    </div> <!-- branch -->
 
     <div class="items">
         <div style="text-transform:capitalize;" v-for="item in items" v-bind:class="{selected: block == item, item: true}" v-on:click="block = (block == item ? '' : item)">{{item}}</div>
     </div> <!-- items -->
 
     <div class="blocks">
+
+        <div v-bind:class="{selected: block == 'branch', block: true}">
+            <h4>Branch</h4>
+            <div>
+                <div>
+                    <input v-model="switchBranch.name" v-on:keydown.13="SwitchBranch" placeholder="Branch name">
+                </div>
+            </div>
+        </div> <!-- branch -->
+
         <div v-bind:class="{selected: block == 'get', block: true}">
             <h4>Get</h4>
             <div>
