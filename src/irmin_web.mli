@@ -18,6 +18,7 @@ module Make (Store : Irmin_graphql.STORE) : sig
 
   val run_custom :
        ?handler:(Yurt.Server.server -> Yurt.Server.server)
+    -> ?ssl:[`Certificate of string] * [`Key of string]
     -> ?addr:string
     -> ?port:int
     -> ?static:string
@@ -26,6 +27,7 @@ module Make (Store : Irmin_graphql.STORE) : sig
 
   val run :
        ?handler:(Yurt.Server.server -> Yurt.Server.server)
+    -> ?ssl:[`Certificate of string] * [`Key of string]
     -> ?addr:string
     -> ?port:int
     -> title:string

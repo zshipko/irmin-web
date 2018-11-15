@@ -10,6 +10,13 @@ let address =
   Arg.(
     value & opt string "localhost" & info ["a"; "address"] ~docv:"ADDR" ~doc)
 
+let ssl =
+  let doc = "A comma separated pair of ssl certificate and ssl key" in
+  Arg.(
+    value
+    & opt (some @@ pair ~sep:',' string string) None
+    & info ["ssl"] ~docv:"SSL_CONFIG" ~doc)
+
 let static =
   let doc = "Static file path" in
   Arg.(required & pos 0 (some string) None & info [] ~docv:"STATIC" ~doc)
@@ -30,10 +37,16 @@ let print_info port static =
   Lwt_io.printlf "Running irmin-web\n\n\tport = %d\n\tstatic dir = %s" port
     static
 
+let ssl_config = function
+  | None ->
+    None
+  | Some (crt, key) ->
+    Some (`Certificate crt, `Key key)
+
 let run ?print_info:(pi = true) name ?title ~css ~js ~html =
   let run address port
       (Irmin_unix.Resolver.S ((module Store), store, remote_fn))
-      allow_mutations page_title =
+      allow_mutations page_title ssl =
     let title =
       match page_title with
       | Some t ->
@@ -57,7 +70,9 @@ let run ?print_info:(pi = true) name ?title ~css ~js ~html =
       >>= fun store ->
       let server = Server.create ~allow_mutations store in
       (if pi then print_info port "<simple>" else Lwt.return ())
-      >>= fun () -> Server.run ~addr:address ~title ~css ~js ~html ~port server
+      >>= fun () ->
+      Server.run ?ssl:(ssl_config ssl) ~addr:address ~title ~css ~js ~html
+        ~port server
     in
     Lwt_main.run p
   in
@@ -68,14 +83,15 @@ let run ?print_info:(pi = true) name ?title ~css ~js ~html =
       $ port
       $ Irmin_unix.Resolver.store
       $ mutations
-      $ page_title)
+      $ page_title
+      $ ssl)
   in
   Term.exit @@ Term.eval (main_t, Term.info name)
 
 let run_custom ?print_info:(pi = true) name =
   let run address port
       (Irmin_unix.Resolver.S ((module Store), store, remote_fn)) static
-      allow_mutations =
+      allow_mutations ssl =
     let module Store = struct
       include Store
 
@@ -88,7 +104,9 @@ let run_custom ?print_info:(pi = true) name =
       >>= fun store ->
       let server = Server.create ~allow_mutations store in
       (if pi then print_info port static else Lwt.return ())
-      >>= fun () -> Server.run_custom ~addr:address ~static ~port server
+      >>= fun () ->
+      Server.run_custom ?ssl:(ssl_config ssl) ~addr:address ~static ~port
+        server
     in
     Lwt_main.run p
   in
@@ -99,6 +117,7 @@ let run_custom ?print_info:(pi = true) name =
       $ port
       $ Irmin_unix.Resolver.store
       $ static
-      $ mutations)
+      $ mutations
+      $ ssl)
   in
   Term.exit @@ Term.eval (main_t, Term.info name)
