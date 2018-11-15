@@ -57,7 +57,17 @@ var app = new Vue({
         },
         List: (event) => {
             ir.list(app.list.key).then((x) => {
-                app.list.items = Object.keys(x);
+                var arr = [];
+                for (var k in x) {
+                    var s;
+                    if (x[k] === null) {
+                        s = "DIR " + k;
+                    } else {
+                        s = "FILE " + k;
+                    }
+                    arr.push(s);
+                }
+                app.list.items = arr;
                 app.list.key = '';
                 app.$forceUpdate();
             }, app.Error);
