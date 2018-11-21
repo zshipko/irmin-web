@@ -98,3 +98,24 @@ QUnit.test("Merge", function(assert){
     });
 });
 
+QUnit.test("GetTree/SetTree", function(assert){
+    let done = assert.async();
+    let master = ir.master();
+    let tree = {"bar": {"value": "a"}, "baz/x": {"value": "b"}};
+    master.setTree("foo", tree).then((res) => {
+        master.getTree("foo").then(res => {
+            for (var key in res) {
+                assert.ok(tree[key].value == res[key].value);
+            }
+            done();
+        }, err => {
+            console.log(err);
+            assert.ok(false);
+            done();
+        });
+    }, err => {
+        console.log(err);
+        assert.ok(false);
+        done();
+    });
+});
