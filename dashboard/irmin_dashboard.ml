@@ -3,8 +3,8 @@
   ISC license, see terms at the end of the file. %%NAME%% %%VERSION%%
   ---------------------------------------------------------------------------*)
 
-let css = ("index.css", [%blob "../../../dashboard/static/css/index.css"])
-let js = ("index.js", [%blob "../../../dashboard/static/js/index.js"])
+let css = [%blob "../../../dashboard/static/css/index.css"]
+let js = [%blob "../../../dashboard/static/js/index.js"]
 let html = [%blob "../../../dashboard/static/index.html"]
 let title = "Irmin"
 let _ = Irmin_web.Cli.run ~title ~css ~js ~html "irmin-dashboard"

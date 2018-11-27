@@ -1,1 +1,1 @@
-let () = Irmin_web.Cli.run_custom "irmin-web" ~print_info:true
+let () = Irmin_web.Cli.run "irmin-web" ~print_info:true

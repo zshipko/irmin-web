@@ -13,8 +13,7 @@ available: [ ocaml-version >= "4.03.0"]
 depends:
 [
     "dune" {build}
-    "irmin-web"
-    "irmin-unix"
+    "irmin-web-unix"
 ]
 
 depopts: []

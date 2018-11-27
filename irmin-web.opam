@@ -13,12 +13,14 @@ available: [ ocaml-version >= "4.03.0"]
 depends:
 [
     "dune" {build}
-    "astring"
+    "cohttp-lwt-unix"
     "irmin-unix"
     "irmin-graphql"
-    "yurt"
-    "cmdliner"
     "ppx_blob"
+    "ezjsonm"
+    "tyxml"
+    "tyxml-ppx"
+    "cmdliner"
 ]
 
 depopts: []

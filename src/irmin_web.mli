@@ -14,40 +14,30 @@ val read_file : string -> string
 module Make (Store : Irmin_graphql.STORE) : sig
   type t
 
-  val create : ?allow_mutations:bool -> Store.t -> t
-
-  val run_custom :
-       ?handler:(Yurt.Server.server -> Yurt.Server.server)
-    -> ?ssl:[`Certificate of string] * [`Key of string]
-    -> ?addr:string
-    -> ?port:int
-    -> ?static:string
-    -> t
-    -> unit Lwt.t
+  val create :
+    ?allow_mutations:bool ->
+    title:string ->
+    html:string ->
+    css:string ->
+    js:string ->
+    Store.t -> t
 
   val run :
-       ?handler:(Yurt.Server.server -> Yurt.Server.server)
-    -> ?ssl:[`Certificate of string] * [`Key of string]
+       ?ssl:([`Certificate of string ] * [`Key of string])
     -> ?addr:string
     -> ?port:int
-    -> title:string
-    -> css:string * string
-    -> js:string * string
-    -> html:string
     -> t
     -> unit Lwt.t
 end
 
 module Cli : sig
-  val run_custom : ?print_info:bool -> string -> unit
-
   val run :
        ?print_info:bool
-    -> string
     -> ?title:string
-    -> css:string * string
-    -> js:string * string
-    -> html:string
+    -> ?html:string
+    -> ?css:string
+    -> ?js:string
+    -> string
     -> unit
 end
 (*---------------------------------------------------------------------------
