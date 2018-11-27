@@ -19,7 +19,6 @@ QUnit.test("List", function(assert){
     let done = assert.async();
     let master = ir.master();
     master.list().then(res => {
-        console.log(res);
         assert.ok(res["abc"] === "1234")
         done();
     }, err => {
