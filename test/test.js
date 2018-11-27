@@ -15,6 +15,31 @@ QUnit.test("Get/set", function(assert){
     });
 });
 
+QUnit.test("List", function(assert){
+    let done = assert.async();
+    let master = ir.master();
+    master.list().then(res => {
+        console.log(res);
+        assert.ok(res["abc"] === "1234")
+        done();
+    }, err => {
+        assert.ok(false);
+        done();
+    });
+});
+
+QUnit.test("Get/set with weird keys", function(assert){
+    let done = assert.async();
+    let br = ir.branch("testing123");
+    br.set("a/b//", "testing123").then(res => {
+        assert.ok(res.hash);
+        br.get(["a", "b", ""]).then(res => {
+            assert.ok(res == "testing123");
+            done();
+        });
+    })
+});
+
 QUnit.test("Get/set aaa", function(assert){
     let done = assert.async();
     let aaa = ir.branch('aaa');
@@ -27,17 +52,7 @@ QUnit.test("Get/set aaa", function(assert){
     });
 });
 
-QUnit.test("List", function(assert){
-    let done = assert.async();
-    let master = ir.master();
-    master.list().then(res => {
-        assert.ok(res["abc"] === "1234")
-        done();
-    }, err => {
-        assert.ok(false);
-        done();
-    });
-});
+
 
 QUnit.test("Remove", function(assert){
     let done = assert.async();
@@ -108,14 +123,6 @@ QUnit.test("GetTree/SetTree", function(assert){
                 assert.ok(tree[key].value == res[key].value);
             }
             done();
-        }, err => {
-            console.log(err);
-            assert.ok(false);
-            done();
         });
-    }, err => {
-        console.log(err);
-        assert.ok(false);
-        done();
     });
 });
