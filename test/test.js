@@ -18,10 +18,12 @@ QUnit.test("Get/set", function(assert){
 QUnit.test("List", function(assert){
     let done = assert.async();
     let master = ir.master();
-    master.list().then(res => {
+    master.list(null).then(res => {
+        console.log(res);
         assert.ok(res["abc"] === "1234")
         done();
     }, err => {
+        console.log(err);
         assert.ok(false);
         done();
     });
