@@ -25,59 +25,9 @@ $ make test
 
 Then visit [http://localhost:8080](http://localhost:8080) to execute the tests.
 
-## A basic example using OCaml
+## Example
 
-The following is an example of a simple website that will display the hash of the latest commit on the master branch when the page is loaded.
-
-css/index.css:
-
-```css
-body {
-    background: black;
-    color: white;
-}
-```
-
-js/index.js:
-
-```javascript
-ir.master().then((t) => {
-    document.querySelector(".hash").innerHTML = t.head.hash;
-})
-```
-
-index.html:
-
-```html
-<html>
-    <head>
-        <link rel="stylesheet" href="/static/css/index.css" />
-        <script src="/irmin.js"></script>
-    </head>
-    <body>
-        <div class="hash"></div>
-        <script src="/static/js/index.js"></script>
-    </body>
-</html>
-```
-
-```ocaml
-open Lwt.Infix
-open Irmin_unix
-module Store = Git.FS.KV(Irmin.Contents.String)
-module Web = Irmin_web.Make(Store)
-
-let config = Irmin_git.config "/tmp/irmin"
-
-let main =
-    let allow_mutations = false in
-    Web.create ~allow_mutations config >>= fun t ->
-    Web.run_custom t
-
-let () = Lwt_main.run main
-```
-
-For another example, see [irmin-dashboard](https://github.com/zshipko/irmin-web/tree/master/dashboard).
+See [irmin-dashboard](https://github.com/zshipko/irmin-web/tree/master/dashboard).
 
 You can also run `irmin-dashboard` from the command line using `dune`:
 
