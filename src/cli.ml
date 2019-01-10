@@ -55,18 +55,18 @@ let get_string a b default =
   match a with
   | Some x -> x
   | None ->
-      (match b with
-      | Some x -> x
-      | None -> default ())
+    (match b with
+     | Some x -> x
+     | None -> default ())
 
 let read_file filename =
   match filename with
   | None -> None
   | Some f ->
-      let c = open_in f in
-      let len = in_channel_length c in
-      let s = really_input_string c len in
-      close_in c; Some s
+    let c = open_in f in
+    let len = in_channel_length c in
+    let s = really_input_string c len in
+    close_in c; Some s
 
 let run ?print_info:(pi = true) ?title ?html ?css ?js name =
   let run address port
@@ -77,13 +77,11 @@ let run ?print_info:(pi = true) ?title ?html ?css ?js name =
     let html = get_string (read_file html_file) html (fun () -> "") in
     let js = get_string (read_file js_file) js (fun () -> failwith "Javascript file is required") in
     let css = get_string (read_file css_file) css (fun () -> "") in
-    let module Store = struct
-      include Store
-
-      let info = Irmin_unix.info
+    let module Config = struct
       let remote = remote_fn
     end in
-    let module Server = Web.Make (Store) in
+    let module Graphql = Irmin_unix.Graphql.Server.Make(Store)(Config) in
+    let module Server = Web.Make (Graphql) in
     let p =
       store
       >>= fun store ->

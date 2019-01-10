@@ -10,11 +10,10 @@ let read_file filename =
   let res = really_input_string ic len in
   close_in ic; res
 
-module Make (Store : Irmin_graphql.STORE) = struct
-  module Graphql = Irmin_graphql.Make (Store)
+module Make (Store : Irmin_graphql.Server.S) = struct
 
   type t =
-    { store : Store.t
+    { store : Store.store
     ; title: string
     ; html : string
     ; css : string
@@ -22,7 +21,6 @@ module Make (Store : Irmin_graphql.STORE) = struct
     ; allow_mutations : bool }
 
   let create ?(allow_mutations = true) ~title ~html ~css ~js store = {store; title; html; css; js; allow_mutations}
-  let start_graphql_server t port = Graphql.start_server ~port t.store
 
   let check t doc =
     let open Graphql_parser in
@@ -37,8 +35,8 @@ module Make (Store : Irmin_graphql.STORE) = struct
         doc
     else true
 
-  let graphql t graphql_address req body =
-    let headers = Cohttp.Request.headers req in
+  let graphql t req body =
+    let schema = Store.schema t.store in
     Cohttp_lwt.Body.to_string body
     >>= fun body ->
     let json = Ezjsonm.from_string body in
@@ -48,8 +46,7 @@ module Make (Store : Irmin_graphql.STORE) = struct
     | Ok doc ->
       if check t doc then
         let body = Cohttp_lwt.Body.of_string body  in
-        Client.post ~headers ~body graphql_address
-        >>= fun (_, body) -> Server.respond ~status:`OK ~body ()
+        Store.execute_request schema req body
       else Server.respond_string ~status:`Unauthorized ~body:"Encountered blacklisted operation" ()
     | Error _ ->
       Server.respond_string ~status:`Bad_request ~body:"Invalid GraphQL query" ()
@@ -84,10 +81,10 @@ module Make (Store : Irmin_graphql.STORE) = struct
     Tyxml.Html.pp () fmt html;
     Buffer.contents buffer
 
-  let callback t graphql_address address html _conn req body =
+  let callback t address html _conn req body =
     let uri = Cohttp_lwt.Request.uri req in
     match Uri.path uri with
-    | "/graphql" -> graphql t graphql_address req body
+    | "/graphql" -> graphql t req body
     | "/irmin.js" -> irmin_js_handler address
     | "/static/js/main.js" ->
         let headers = Cohttp.Header.of_list [("Content-Type", "text/javascript")] in
@@ -111,16 +108,11 @@ module Make (Store : Irmin_graphql.STORE) = struct
 
 
   let run ?ssl ?(addr = "localhost") ?(port = 8080) t =
-    let graphql_port = port + 1 in
     let address = Printf.sprintf "http://%s:%d/graphql" addr port in
-    let graphql_address =
-      Uri.of_string @@ Printf.sprintf "http://localhost:%d/graphql" graphql_port
-    in
     let html = make_html t in
-    let callback = callback t graphql_address address html in
+    let callback = callback t address html in
     configure addr port ssl >>= fun (ctx, mode) ->
     let ctx = Cohttp_lwt_unix.Net.init ~ctx () in
     let server = Server.make ~callback () in
-    Lwt.async (fun () -> start_graphql_server t graphql_port);
     Server.create ~ctx ~mode server
 end

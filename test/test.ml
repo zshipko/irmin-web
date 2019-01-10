@@ -5,13 +5,11 @@
 
 open Lwt.Infix
 module Store = Irmin_unix.Git.FS.KV (Irmin.Contents.String)
-
-module Server = Irmin_web.Make (struct
-  include Store
-
-  let info = Irmin_unix.info
+module Graphql = Irmin_unix.Graphql.Server.Make(Store)(struct
   let remote = Some Store.remote
 end)
+
+module Server = Irmin_web.Make (Graphql)
 
 let html = [%blob "../../test/test.html"]
 let js = [%blob "../../test/test.js"]
