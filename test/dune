@@ -1,5 +1,5 @@
 (executables
-    (libraries digestif.c irmin-web)
+    (libraries digestif.c irmin-web cohttp-lwt-unix)
     (names test)
     (preprocess (pps ppx_blob))
     (modules test))

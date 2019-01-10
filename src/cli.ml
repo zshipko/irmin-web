@@ -81,28 +81,40 @@ let run ?print_info:(pi = true) ?title ?html ?css ?js name =
       let remote = remote_fn
     end in
     let module Graphql = Irmin_unix.Graphql.Server.Make(Store)(Config) in
-    let module Server = Web.Make (Graphql) in
+    let module Server = Web.Make (Cohttp_lwt_unix.Server)(Graphql) in
     let p =
       store
       >>= fun store ->
-      let server = Server.create ~allow_mutations ~title ~css ~js ~html store in
+      let server = Server.config ~allow_mutations ~title ~css ~js ~html store in
       (if pi then print_info port "<simple>" else Lwt.return ())
       >>= fun () ->
-      Server.run ?ssl:(ssl_config ssl) ~addr:address ~port server
+      let server = Server.make ~addr:address ~port server in
+      let on_exn _ = () in
+      (match ssl with
+        | None ->
+          Conduit_lwt_unix.init ~src:address () >|= fun ctx ->
+          ctx, (`TCP (`Port port))
+        | Some (crt, key) ->
+          let tls_server_key = `TLS (`Crt_file_path crt, `Key_file_path key, `No_password) in
+          Conduit_lwt_unix.init ~src:address ~tls_server_key () >|= fun ctx ->
+          ctx, `TLS (`Crt_file_path crt, `Key_file_path key, `No_password, `Port port))
+      >>= fun (ctx, mode) ->
+      let ctx = Cohttp_lwt_unix.Net.init ~ctx () in
+      Cohttp_lwt_unix.Server.create server ~ctx ~mode ~on_exn
     in
     Lwt_main.run p
-  in
-  let main_t =
-    Term.(
-      const run
-      $ address
-      $ port
-      $ Irmin_unix.Resolver.store
-      $ mutations
-      $ ssl
-      $ page_title
-      $ html_file
-      $ css_file
-      $ js_file)
-  in
-  Term.exit @@ Term.eval (main_t, Term.info name)
+    in
+    let main_t =
+      Term.(
+        const run
+        $ address
+        $ port
+        $ Irmin_unix.Resolver.store
+        $ mutations
+        $ ssl
+        $ page_title
+        $ html_file
+        $ css_file
+        $ js_file)
+    in
+    Term.exit @@ Term.eval (main_t, Term.info name)

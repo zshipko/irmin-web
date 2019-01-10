@@ -11,10 +11,10 @@
 
 val read_file : string -> string
 
-module Make (Store : Irmin_graphql.Server.S) : sig
+module Make (Server: Cohttp_lwt.S.Server) (Store : Irmin_graphql.Server.S) : sig
   type t
 
-  val create :
+  val config:
     ?allow_mutations:bool ->
     title:string ->
     html:string ->
@@ -22,17 +22,16 @@ module Make (Store : Irmin_graphql.Server.S) : sig
     js:string ->
     Store.store -> t
 
-  val run :
-       ?ssl:([`Certificate of string ] * [`Key of string])
-    -> ?addr:string
-    -> ?port:int
+  val make:
+    addr:string
+    -> port:int
     -> t
-    -> unit Lwt.t
+    -> Server.t
 end
 
 module Cli : sig
   val run :
-       ?print_info:bool
+    ?print_info:bool
     -> ?title:string
     -> ?html:string
     -> ?css:string

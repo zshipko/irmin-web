@@ -9,7 +9,7 @@ module Graphql = Irmin_unix.Graphql.Server.Make(Store)(struct
   let remote = Some Store.remote
 end)
 
-module Server = Irmin_web.Make (Graphql)
+module Server = Irmin_web.Make (Cohttp_lwt_unix.Server) (Graphql)
 
 let html = [%blob "../../test/test.html"]
 let js = [%blob "../../test/test.js"]
@@ -20,8 +20,13 @@ let main =
   Store.Repo.v cfg
   >>= Store.master
   >>= fun s ->
-  let server = Server.create ~allow_mutations:true  ~title:"Irmin.js Test Suite" ~html ~js ~css s in
-  Server.run server
+  let server = Server.config ~allow_mutations:true  ~title:"Irmin.js Test Suite" ~html ~js ~css s in
+  let server = Server.make server ~addr:"localhost" ~port:8080 in
+  let on_exn _ = () in
+  let mode = `TCP (`Port 8080) in
+  Conduit_lwt_unix.init ~src:"localhost" () >>= fun ctx ->
+  let ctx = Cohttp_lwt_unix.Net.init ~ctx () in
+  Cohttp_lwt_unix.Server.create ~on_exn ~mode ~ctx server
 
 let _ = Lwt_main.run main
 

@@ -13,14 +13,8 @@ available: [ ocaml-version >= "4.03.0"]
 depends:
 [
     "dune" {build}
-    "cohttp-lwt"
-    "irmin-unix"
-    "irmin-graphql"
-    "ppx_blob"
-    "ezjsonm"
-    "tyxml"
-    "tyxml-ppx"
-    "cmdliner"
+    "irmin-web"
+    "cohttp-lwt-unix"
 ]
 
 depopts: []
