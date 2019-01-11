@@ -9,10 +9,10 @@
 
 (** {1 Irmin-web} *)
 
-val read_file : string -> string
-
-module Make (Server: Cohttp_lwt.S.Server) (Store : Irmin_graphql.Server.S) : sig
+module type S = sig
   type t
+  type store
+  type server
 
   val config:
     ?allow_mutations:bool ->
@@ -20,14 +20,17 @@ module Make (Server: Cohttp_lwt.S.Server) (Store : Irmin_graphql.Server.S) : sig
     html:string ->
     css:string ->
     js:string ->
-    Store.store -> t
+    store -> t
 
   val make:
     addr:string
     -> port:int
     -> t
-    -> Server.t
+    -> server
 end
+
+module Make (Server: Cohttp_lwt.S.Server) (Store : Irmin_graphql.Server.S):
+  S with type store = Store.store and type server = Server.t
 
 
 (*---------------------------------------------------------------------------

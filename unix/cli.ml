@@ -1,5 +1,5 @@
-open Lwt.Infix
 open Cmdliner
+open Lwt.Infix
 
 let port =
   let doc = "Port to listen on" in
@@ -68,6 +68,7 @@ let read_file filename =
     let s = really_input_string c len in
     close_in c; Some s
 
+
 let run ?print_info:(pi = true) ?title ?html ?css ?js name =
   let run address port
       (Irmin_unix.Resolver.S ((module Store), store, remote_fn))
@@ -81,40 +82,21 @@ let run ?print_info:(pi = true) ?title ?html ?css ?js name =
       let remote = remote_fn
     end in
     let module Graphql = Irmin_unix.Graphql.Server.Make(Store)(Config) in
-    let module Server = Irmin_web.Make (Cohttp_lwt_unix.Server)(Graphql) in
-    let p =
-      store
-      >>= fun store ->
-      let server = Server.config ~allow_mutations ~title ~css ~js ~html store in
-      (if pi then print_info port "<simple>" else Lwt.return ())
-      >>= fun () ->
-      let server = Server.make ~addr:address ~port server in
-      let on_exn _ = () in
-      (match ssl with
-        | None ->
-          Conduit_lwt_unix.init ~src:address () >|= fun ctx ->
-          ctx, (`TCP (`Port port))
-        | Some (crt, key) ->
-          let tls_server_key = `TLS (`Crt_file_path crt, `Key_file_path key, `No_password) in
-          Conduit_lwt_unix.init ~src:address ~tls_server_key () >|= fun ctx ->
-          ctx, `TLS (`Crt_file_path crt, `Key_file_path key, `No_password, `Port port))
-      >>= fun (ctx, mode) ->
-      let ctx = Cohttp_lwt_unix.Net.init ~ctx () in
-      Cohttp_lwt_unix.Server.create server ~ctx ~mode ~on_exn
-    in
-    Lwt_main.run p
-    in
-    let main_t =
-      Term.(
-        const run
-        $ address
-        $ port
-        $ Irmin_unix.Resolver.store
-        $ mutations
-        $ ssl
-        $ page_title
-        $ html_file
-        $ css_file
-        $ js_file)
-    in
-    Term.exit @@ Term.eval (main_t, Term.info name)
+    let module Server = Web.Make(Graphql) in
+    if pi then Printf.printf "Running irmin-web on %s:%d\n" address port;
+    Lwt_main.run (store >>= fun store -> Server.run ?ssl ~allow_mutations ~title ~css ~js ~html ~addr:address ~port store)
+  in
+  let main_t =
+    Term.(
+      const run
+      $ address
+      $ port
+      $ Irmin_unix.Resolver.store
+      $ mutations
+      $ ssl
+      $ page_title
+      $ html_file
+      $ css_file
+      $ js_file)
+  in
+  Term.exit @@ Term.eval (main_t, Term.info name)
