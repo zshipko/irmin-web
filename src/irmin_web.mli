@@ -29,16 +29,7 @@ module Make (Server: Cohttp_lwt.S.Server) (Store : Irmin_graphql.Server.S) : sig
     -> Server.t
 end
 
-module Cli : sig
-  val run :
-    ?print_info:bool
-    -> ?title:string
-    -> ?html:string
-    -> ?css:string
-    -> ?js:string
-    -> string
-    -> unit
-end
+
 (*---------------------------------------------------------------------------
   Copyright (c) 2018 Zach Shipko
 

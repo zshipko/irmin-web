@@ -1,5 +1,3 @@
-build:
-	dune clean && dune build
-
-test: build
+test:
+	dune clean
 	dune runtest

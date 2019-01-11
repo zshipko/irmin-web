@@ -20,14 +20,14 @@ depends:
     "ezjsonm"
     "tyxml"
     "tyxml-ppx"
-    "cmdliner"
 ]
 
 depopts: []
 
 build:
 [
-    [make]
+    ["dune" "clean"]
+    ["dune" "build" "-p" name]
 ]
 
 build-test:

@@ -1,4 +1,4 @@
 (library
     (name irmin_web_mirage)
     (public_name irmin-web-mirage)
-    (libraries irmin-web cohttp-lwt-mirage))
+    (libraries irmin-web cohttp-mirage))

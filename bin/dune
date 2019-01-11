@@ -1,6 +1,6 @@
 (executables
-    (package irmin-web)
-    (libraries digestif.c irmin-web)
+    (package irmin-web-unix)
+    (libraries digestif.c irmin-web-unix)
     (names main)
     (public_names irmin-web))
 

@@ -81,7 +81,7 @@ let run ?print_info:(pi = true) ?title ?html ?css ?js name =
       let remote = remote_fn
     end in
     let module Graphql = Irmin_unix.Graphql.Server.Make(Store)(Config) in
-    let module Server = Web.Make (Cohttp_lwt_unix.Server)(Graphql) in
+    let module Server = Irmin_web.Make (Cohttp_lwt_unix.Server)(Graphql) in
     let p =
       store
       >>= fun store ->

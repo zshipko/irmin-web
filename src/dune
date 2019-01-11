@@ -2,4 +2,4 @@
     (name irmin_web)
     (public_name irmin-web)
     (preprocess (pps ppx_blob tyxml-ppx))
-    (libraries cohttp-lwt irmin-unix irmin-graphql ezjsonm tyxml cmdliner))
+    (libraries cohttp-lwt irmin-unix irmin-graphql ezjsonm tyxml))

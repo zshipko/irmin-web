@@ -21,7 +21,7 @@ depopts: []
 
 build:
 [
-    [make]
+    ["dune" "build" "-p" name]
 ]
 
 build-test:

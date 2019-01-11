@@ -15,13 +15,14 @@ depends:
     "dune" {build}
     "irmin-web"
     "cohttp-lwt-unix"
+    "cmdliner"
 ]
 
 depopts: []
 
 build:
 [
-    [make]
+    ["dune" "build" "-p" name]
 ]
 
 build-test:
