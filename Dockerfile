@@ -3,10 +3,15 @@
 FROM ocaml/opam2:alpine as base
 RUN sudo apk add --update m4 gmp gmp-dev perl
 RUN git -C /home/opam/opam-repository pull
-RUN opam update
 
 WORKDIR /src
 ENV OPAMYES 1
+RUN opam update
+RUN opam pin add ke.dev --dev
+RUN opam pin add encore --dev
+RUN opam pin add git.dev --dev
+RUN opam pin add git-http.dev --dev
+RUN opam pin add git-unix.dev --dev
 RUN opam pin add irmin.dev --dev
 RUN opam pin add irmin-mem.dev --dev
 RUN opam pin add irmin-fs.dev --dev
