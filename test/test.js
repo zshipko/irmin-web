@@ -18,12 +18,10 @@ QUnit.test("Get/set", function(assert){
 QUnit.test("List", function(assert){
     let done = assert.async();
     let master = ir.master();
-    master.list(null).then(res => {
-        console.log(res);
+    master.list("/").then(res => {
         assert.ok(res["abc"] === "1234")
         done();
     }, err => {
-        console.log(err);
         assert.ok(false);
         done();
     });
@@ -104,7 +102,7 @@ QUnit.test("Pull", function(assert){
 QUnit.test("Merge", function(assert){
     let done = assert.async();
     let aaa = ir.branch('aaa');
-    aaa.merge('master').then(res => {
+    aaa.mergeWithBranch('master').then(res => {
         aaa.get('README.md').then(res => {
             assert.ok(res != null);
             assert.ok(res.length > 0);
@@ -121,7 +119,7 @@ QUnit.test("GetTree/SetTree", function(assert){
     master.setTree("foo", tree).then((res) => {
         master.getTree("foo").then(res => {
             for (var key in res) {
-                assert.ok(tree[key].value == res[key].value);
+                assert.ok(tree[key.substring(4)].value == res[key].value);
             }
             done();
         });

@@ -6,9 +6,7 @@
 open Lwt.Infix
 module Store = Irmin_unix.Git.FS.KV (Irmin.Contents.String)
 
-module Server = Irmin_web.Make (struct
-  include Store
-
+module Server = Irmin_web.Make (Store)(struct
   let info = Irmin_unix.info
   let remote = Some Store.remote
 end)
@@ -20,7 +18,6 @@ let css = [%blob "../../test/test.css"]
 let main =
   let cfg = Irmin_git.config "./tmp" in
   Store.Repo.v cfg
-  >>= Store.master
   >>= fun s ->
   let server = Server.create ~allow_mutations:true  ~title:"Irmin.js Test Suite" ~html ~js ~css s in
   Server.run server

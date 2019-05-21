@@ -41,8 +41,8 @@ let config path =
   let head = Git.Reference.of_string "refs/heads/master" in
   Irmin_git.config ~head path
 
-let print_info port static =
-  Lwt_io.printlf "Running irmin-web\n\n\tport = %d\n\tstatic dir = %s" port
+let print_info port addr static =
+  Lwt_io.printlf "Running irmin-web\n\n\tport = %d\n\taddr=%s\n\tstatic dir = %s" port addr
     static
 
 let ssl_config = function
@@ -77,18 +77,15 @@ let run ?print_info:(pi = true) ?title ?html ?css ?js name =
     let html = get_string (read_file html_file) html (fun () -> "") in
     let js = get_string (read_file js_file) js (fun () -> failwith "Javascript file is required") in
     let css = get_string (read_file css_file) css (fun () -> "") in
-    let module Store = struct
-      include Store
-
-      let info = Irmin_unix.info
+    let module Config = struct
       let remote = remote_fn
+      let info = Irmin_unix.info
     end in
-    let module Server = Web.Make (Store) in
+    let module Server = Web.Make (Store) (Config) in
     let p =
-      store
-      >>= fun store ->
-      let server = Server.create ~allow_mutations ~title ~css ~js ~html store in
-      (if pi then print_info port "<simple>" else Lwt.return ())
+      store >>= fun store ->
+      let server = Server.create ~allow_mutations ~title ~css ~js ~html (Store.repo store) in
+      (if pi then print_info port address "<simple>" else Lwt.return ())
       >>= fun () ->
       Server.run ?ssl:(ssl_config ssl) ~addr:address ~port server
     in

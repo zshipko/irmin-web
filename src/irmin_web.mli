@@ -11,7 +11,7 @@
 
 val read_file : string -> string
 
-module Make (Store : Irmin_graphql.STORE) : sig
+module Make (Store : Irmin.S) (Config : Irmin_graphql.Server.CONFIG) : sig
   type t
 
   val create :
@@ -20,7 +20,7 @@ module Make (Store : Irmin_graphql.STORE) : sig
     html:string ->
     css:string ->
     js:string ->
-    Store.t -> t
+    Store.repo -> t
 
   val run :
        ?ssl:([`Certificate of string ] * [`Key of string])
